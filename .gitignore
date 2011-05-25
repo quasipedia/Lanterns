@@ -1,4 +1,5 @@
 *~
+*.sh
 *.o
 *.hex
 wordClock

@@ -806,13 +806,13 @@
 .equ	GPIOR07	, 7	; 
 
 ; PRR - Power Reduction Register
-.equ	PRADC	, 0	; Power Reduction ADC
+.equ	PRADC		, 0	; Power Reduction ADC
 .equ	PRUSART0	, 1	; Power Reduction USART
-.equ	PRSPI	, 2	; Power Reduction Serial Peripheral Interface
-.equ	PRTIM1	, 3	; Power Reduction Timer/Counter1
-.equ	PRTIM0	, 5	; Power Reduction Timer/Counter0
-.equ	PRTIM2	, 6	; Power Reduction Timer/Counter2
-.equ	PRTWI	, 7	; Power Reduction TWI
+.equ	PRSPI		, 2	; Power Reduction Serial Peripheral Interface
+.equ	PRTIM1		, 3	; Power Reduction Timer/Counter1
+.equ	PRTIM0		, 5	; Power Reduction Timer/Counter0
+.equ	PRTIM2		, 6	; Power Reduction Timer/Counter2
+.equ	PRTWI		, 7	; Power Reduction TWI
 
 
 ; ***** WATCHDOG *********************
@@ -885,10 +885,10 @@
 .equ	BODLEVEL0	, 0	; Brown-out Detector trigger level
 .equ	BODLEVEL1	, 1	; Brown-out Detector trigger level
 .equ	BODLEVEL2	, 2	; Brown-out Detector trigger level
-.equ	EESAVE	, 3	; EEPROM memory is preserved through chip erase
-.equ	WDTON	, 4	; Watchdog Timer Always On
-.equ	SPIEN	, 5	; Enable Serial programming and Data Downloading
-.equ	DWEN	, 6	; debugWIRE Enable
+.equ	EESAVE		, 3	; EEPROM memory is preserved through chip erase
+.equ	WDTON		, 4	; Watchdog Timer Always On
+.equ	SPIEN		, 5	; Enable Serial programming and Data Downloading
+.equ	DWEN		, 6	; debugWIRE Enable
 .equ	RSTDISBL	, 7	; External reset disable
 
 ; EXTENDED fuse bits
@@ -910,18 +910,19 @@
 
 ; ***** DATA MEMORY DECLARATIONS *****************************************
 .equ	FLASHEND	, 0x1fff	; Note: Word address
-.equ	IOEND	, 0x00ff
+.equ	IOEND		, 0x00ff
 .equ	SRAM_START	, 0x0100
 .equ	SRAM_SIZE	, 1024
-.equ	RAMEND	, 0x04ff
-.equ	XRAMEND	, 0x0000
-.equ	E2END	, 0x01ff
+.equ	RAMEND		, 0x04ff
+.equ	XRAMEND		, 0x0000
+.equ	E2END		, 0x01ff
 .equ	EEPROMEND	, 0x01ff
 .equ	EEADRBITS	, 9
 #pragma AVRPART MEMORY PROG_FLASH 16384
 #pragma AVRPART MEMORY EEPROM 512
 #pragma AVRPART MEMORY INT_SRAM SIZE 1024
 #pragma AVRPART MEMORY INT_SRAM START_ADDR 0x100
+
 
 
 
@@ -946,7 +947,7 @@
 .equ	PCI0addr	, 0x0006	; Pin Change Interrupt Request 0
 .equ	PCI1addr	, 0x0008	; Pin Change Interrupt Request 0
 .equ	PCI2addr	, 0x000a	; Pin Change Interrupt Request 1
-.equ	WDTaddr	, 0x000c	; Watchdog Time-out Interrupt
+.equ	WDTaddr		, 0x000c	; Watchdog Time-out Interrupt
 .equ	OC2Aaddr	, 0x000e	; Timer/Counter2 Compare Match A
 .equ	OC2Baddr	, 0x0010	; Timer/Counter2 Compare Match A
 .equ	OVF2addr	, 0x0012	; Timer/Counter2 Overflow
@@ -957,14 +958,14 @@
 .equ	OC0Aaddr	, 0x001c	; TimerCounter0 Compare Match A
 .equ	OC0Baddr	, 0x001e	; TimerCounter0 Compare Match B
 .equ	OVF0addr	, 0x0020	; Timer/Couner0 Overflow
-.equ	SPIaddr	, 0x0022	; SPI Serial Transfer Complete
+.equ	SPIaddr		, 0x0022	; SPI Serial Transfer Complete
 .equ	URXCaddr	, 0x0024	; USART Rx Complete
 .equ	UDREaddr	, 0x0026	; USART, Data Register Empty
 .equ	UTXCaddr	, 0x0028	; USART Tx Complete
 .equ	ADCCaddr	, 0x002a	; ADC Conversion Complete
 .equ	ERDYaddr	, 0x002c	; EEPROM Ready
-.equ	ACIaddr	, 0x002e	; Analog Comparator
-.equ	TWIaddr	, 0x0030	; Two-wire Serial Interface
+.equ	ACIaddr		, 0x002e	; Analog Comparator
+.equ	TWIaddr		, 0x0030	; Two-wire Serial Interface
 .equ	SPMRaddr	, 0x0032	; Store Program Memory Read
 
 .equ	INT_VECTORS_SIZE	, 52	; size in words
