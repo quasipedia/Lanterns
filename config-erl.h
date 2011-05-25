@@ -41,3 +41,5 @@
 .equ	NUMBER_TLC_CHIPS,	2
 .global NUMBER_TLC_CHIPS
 
+.equ    MINUTES_PER_STEP, 5
+.equ    HOURS_PER_DAY, 12
