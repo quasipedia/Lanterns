@@ -1,4 +1,4 @@
 *.o
 *.hex
 wordClock
-
+config.h

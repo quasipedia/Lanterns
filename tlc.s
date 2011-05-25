@@ -1,27 +1,28 @@
 .include "m168.h"
+.include "config.h"
 	
-;;;
-;;; Erl's code to drive one or more TLC5940 LED driver chips
-;;; In GNU Assembler for AVR ATMega168s
-;;; 
+	;;
+	;; Erl's code to drive one or more TLC5940 LED driver chips
+	;; In GNU Assembler for AVR ATMega168s
+	;; 
 
-;;; Registers used:
-;;;   r0, r7, r8, r9 interrupt time scratch
-;;;   r2 = SPI Channel index
-;;;   r6 = SPI Byte type (0-2)
-;;;   r21, r22 scratch for interrupt handling
-;;; 
-;;;   r24:r25	Scratch for interrupt handling
-;;;   r26:r27 = X Used interrupt time to index current values (but pushed)
-;;;   r28:r29 = Y Used interrupt time to index target values
-;;;   r30:r31 = Z Used in SPI to point into current 
+	;; Registers used:
+	;;   r0, r7, r8, r9 interrupt time scratch
+	;;   r2 = SPI Channel index
+	;;   r6 = SPI Byte type (0-2)
+	;;   r21, r22 scratch for interrupt handling
+	;; 
+	;;   r24:r25	Scratch for interrupt handling
+	;;   r26:r27 = X Used interrupt time to index current values (but pushed)
+	;;   r28:r29 = Y Used interrupt time to index target values
+	;;   r30:r31 = Z Used in SPI to point into current 
 
 	;; Global symbols for linking with other code
+	
 .global	TLC_init
 .global TLC_spiInterrupt
 .global TLC_spiTimerInterrupt
 
-.equ NUMBER_TLC_CHIPS,	2
 	;; TLC5940 pin definitions
 .equ	SCLK_PORT,	PORTB
 .equ	SCLK_PIN,	5
@@ -46,9 +47,9 @@ TLC_init:
 
 	;; PB4 = MISO is input, others output
 	ldi	r16, 0xef
-	out	DDRB, r16	/* Set port B to all outputs, except MISO */
-	ser	r16		/* Sets r16 to 0xff */
-	out	DDRD, r16	/* Set port D to all outputs */
+	out	DDRB, r16	; Set port B to all outputs, except MISO
+	ser	r16		; Sets r16 to 0xff
+	out	DDRD, r16	; Set port D to all outputs
 
 	;; Enable SPI, set clock rate fck/2, idle low, data on rise
 	ldi	r16, 0b11010000
@@ -60,13 +61,13 @@ TLC_init:
 	sts	TCCR2A, r16
 	
 	ldi	r16, 0b00000111
-	sts	TCCR2B, r16	/* Select prescaler 1024, turn on */
+	sts	TCCR2B, r16	; Select prescaler 1024, turn on
 	
 	ldi	r16, 3		; Conter top
 	sts	OCR2A, r16
 
 	ldi	r16,	0b00000010
-	sts	TIMSK2, r16   /* Enable interrupt on compare A (OCIE2A bit) */
+	sts	TIMSK2, r16     ; Enable interrupt on compare A (OCIE2A bit)
 
 	ldi	r16,	2
 	mov	r3,	r16	; say that we want two updates of gs data,

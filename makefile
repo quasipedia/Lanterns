@@ -6,7 +6,7 @@ ASFLAGS = -mmcu=atmega168
 LD = avr-ld
 LDFLAGS = -nostdlib
 
-main.o: main.s
+main.o:	main.s
 tlc.o:	tlc.s
 
 wordClock: main.o tlc.o
