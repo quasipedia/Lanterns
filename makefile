@@ -17,6 +17,6 @@ wordClock.hex: wordClock
 
 flash: wordClock.hex
 	avrdude -c usbasp -p m168 -P /dev/parport0 -U flash:w:wordClock.hex
-	
+
 clean:
-	rm *.o *.hex wordClock
+	rm *.o *.hex *.s wordClock
