@@ -1,5 +1,5 @@
 .include "m168.h"
-
+.include "config.h"
 
 	;; Instead of string numbers we could use offsets into GS data, byte+
 	;; half byte; nybble address
@@ -43,7 +43,15 @@
 	;; Timer0: Time handling. clock divider 1024
 	;; Timer2: TLC Handling. Clock divider 1024, max counter 3
 	;;
-	
+
+	;; TICKS_PER_STEP is the number of timer0 ticks per clock step.
+	;; For Erland's clock a clock step is five minutes, for Mac's it will be
+	;; one minute.
+	;; MINUTES_PER_STEP is defined in the relevant config.h file
+	;; 
+	;; 16000000 / (1024 * 255) timer ticks per second * 60 * 60
+	.equ	TICKS_PER_STEP, (16000000 * 60 * MINUTES_PER_STEP) / (1024 * 255)
+	.equ	STEPS_PER_HOUR, (60 / MINUTES_PER_STEP)
 	;;
 	;; Configurable parameters
 	;;
@@ -117,23 +125,23 @@ doneSetting:
 	/* Increment time counter if required */
 	;; Time counter is in r24, increased 62.5 times per second ==
 	;; 18750 == 0x493e times per 5 minutes
-	ldi r16, 0x49
+	ldi r16, hi8( TICKS_PER_STEP )
 	cli			; make sure r24 doesn't change while comparing
-	cpi r24, 0x3e
+	cpi r24, lo8( TICKS_PER_STEP )
 	cpc r25, r16
 	sei
 	brmi	noNewTime
 
 	inc	r17		; 5 minutes past the hour
 	cli
-	subi	r24, 0x3e
-	sbci	r25, 0x49
+	subi	r24, lo8( TICKS_PER_STEP )
+	sbci	r25, hi8( TICKS_PER_STEP )
 	sei
-	cpi	r17, 12
+	cpi	r17, STEPS_PER_HOUR
 	brlo	noNewHour
 
 	inc 	r18		; increment hour count
-	cpi	r18, 12
+	cpi	r18, HOURS_PER_DAY
 	brlo noNewHour
 	ldi 	r18, 0
 	
