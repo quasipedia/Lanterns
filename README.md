@@ -7,7 +7,11 @@ Description
 -----------
 Lanterns is the program that runs the core of a word clock. It has 
 been written in AVR assembly language, for the ATmega168 µC, using 
-__avr-as__ as assembler. 
+__avr-as__ as assembler.
+
+The repo contains different config_xxx.h files that respond to the
+specific needs of the two different clocks built by the two 
+maintainers.
 
 
 Licence
