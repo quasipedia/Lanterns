@@ -298,6 +298,7 @@ returnFromInterrupt:
 ;;; Actual API
 ;;;
 ;;; Parameters: channel number in r10, intensity in r11:r12
+;;; Uses r10
 ;;; 
 TLC_setChannelTargetIntensity:
 	.global TLC_setChannelTargetIntensity
@@ -309,7 +310,10 @@ TLC_setChannelTargetIntensity:
 	add	r26,	r10
 	adc	r26,	0
 
-	st	X+,	0
+	st	X+,	r11
+	st	X+,	r12
+
+	ret
 	
 	.data
 	;;
