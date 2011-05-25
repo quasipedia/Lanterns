@@ -5,9 +5,9 @@ __Copyright (C) 2011 Erland Lewin, Mac Ryan__
 
 Description
 -----------
-Lanterns (Russian for "clock") is the program that runs the core
-of a word clock. It has been written in AVR assembly language,
-for the ATmega168 µC, using _avr-as_ as assembler. 
+Lanterns is the program that runs the core of a word clock. It has 
+been written in AVR assembly language, for the ATmega168 µC, using 
+__avr-as__ as assembler. 
 
 
 Licence
