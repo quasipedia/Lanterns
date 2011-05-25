@@ -1,13 +1,9 @@
 .include "m168.h"
-<<<<<<< Updated upstream
 .include "config.h"
-=======
->>>>>>> Stashed changes
 
 	;; Instead of string numbers we could use offsets into GS data, byte+
 	;; half byte; nybble address
 	;; 
-<<<<<<< Updated upstream
 	;; Registers
 	;;
 	;; r0 = scratch used by interrupt processor, don't use!
@@ -31,8 +27,6 @@
 	;; r26:r27 X, used in TLC_setChannelTargetIntensity. 
 	;; r30:r31 Z = SPI read pointer
 	;;
-=======
->>>>>>> Stashed changes
 	;; Pins:
 	;; 
 	;; PB0 CLKO - TLC5940 GSCLK
@@ -50,7 +44,6 @@
 	;;
 	;; Timer0: Time handling. clock divider 1024
 	;; Timer2: TLC Handling. Clock divider 1024, max counter 3
-<<<<<<< Updated upstream
 	;;
 
 	;; TICKS_PER_STEP is the number of timer0 ticks per clock step.
@@ -64,64 +57,42 @@
 	;;
 	;; Configurable parameters
 	;;
-=======
->>>>>>> Stashed changes
 
-;; Register definitions
-;; r0 = scratch used by interrupt processor, don't use!
-;; r7 = scratch used in interrupt processing
-.equ	SPI_READING , 	r1	; used in interrupt
-.equ	SPI_COUNTER , 	r2
-.equ	NEW_GS_DATA , 	r3	; have new gs data
-.equ	MINUTES_PAST ,	r17	; minutes past hour
-.equ	HOURS ,		r18	; hours (0-11)
-
-	;; r4l:r5h = LED brightness
-	;; r6 = TLC SPI Byte type
-	;; r10 = channel # parameter to TLC_setChannelTargetIntensity
-	;; r11: low byte of channel
-	;; 
-	;; r19 = temp, can be overwritten by any function, but not overwritten
-	;;       in interrupt handlers
-	;; r20 = string nybble address for setting
-	;; r21 = scratch for interrupt handling
-	;; r24:r25 = timer counter
-	;; r30:r31 Z = SPI read pointer
-	;;
-;; GSDATA is the grayscale data. It consists of 32 12 bit values, packed into
-;; 48 bytes. Channel 15 MSB first. 
+;;; 
+;;; GSDATA is the grayscale data. It consists of 32 12 bit values, packed into
+;;; 48 bytes. Channel 15 MSB first.
+;;; 
 .equ	GSDATA,		0x0100
 	
-.text 
+.text /* Beginning of text segment */
+	/*
+	 * Interrupt Vectors
+	 */
+.org  0 /* Start at address 0, boot & reset vector */
+	
+	rjmp init /* Reset vector */
 
-;; INTERRUPT VECTORS
-;; Start at address 0, boot & reset vector
-;; .org = advance the location counter for the section, this section
-;; being the first to run, it will be at the start of the memory, so 
-;; these will be interrupt vectors.
-.org 	0	
-	rjmp init	;; Reset vector
-
-.org OC2Aaddr * 2	;; Compare clock 2 match
+.org OC2Aaddr * 2
 	rjmp	TLC_spiTimerInterrupt
 	
-.org OVF0addr * 2	;; Counter 0 overflow
-	rjmp timerInterrupt
+.org OVF0addr * 2
+	
+	rjmp timerInterrupt	  /* TIMER0 OVF */
 
-.org SPIaddr * 2	;; SPI Serial Transfer Complete
+.org SPIaddr * 2
 	rjmp TLC_spiInterrupt
 	
-.org INT_VECTORS_SIZE * 2
-
+	.org INT_VECTORS_SIZE * 2
 init:
-	;; setup ports
+	/* setup ports */
 	;; set outputs before port direction, so values will be correct on 
 	;; switch
+
 	call	TLC_init
 	
 	;; Initialize the time to midnight
-	ldi	MINUTES_PAST,	0		; 5 minutes past hour
-	ldi	HOURS, 		0		; hour
+	ldi r17, 0		; 5 minutes past hour
+	ldi r18, 0		; hour
 	
 	;; Initialize timer tick counter
 	ldi r24, 0
@@ -153,29 +124,21 @@ loop:
 	sleep
 
 doneSetting:	
-	;; Increment time counter if required
+	/* Increment time counter if required */
 	;; Time counter is in r24, increased 62.5 times per second ==
 	;; 18750 == 0x493e times per 5 minutes
-<<<<<<< Updated upstream
 	ldi r16, hi8( TICKS_PER_STEP )
 	cli			; make sure r24 doesn't change while comparing
 	cpi r24, lo8( TICKS_PER_STEP )
 	cpc r25, r16
-=======
-	ldi 	r16, 0x49
-	cli			; make sure r24 doesn't change while comparing
-	cpi 	r24, 0x3e
-	cpc 	r25, r16
->>>>>>> Stashed changes
 	sei
 	brmi	noNewTime
 
-	inc	MINUTES_PAST		; 5 minutes past the hour
+	inc	r17		; 5 minutes past the hour
 	cli
 	subi	r24, lo8( TICKS_PER_STEP )
 	sbci	r25, hi8( TICKS_PER_STEP )
 	sei
-<<<<<<< Updated upstream
 	cpi	r17, STEPS_PER_HOUR
 	brlo	noNewHour
 
@@ -183,20 +146,11 @@ doneSetting:
 	cpi	r18, HOURS_PER_DAY
 	brlo noNewHour
 	ldi 	r18, 0
-=======
-	cpi	MINUTES_PAST, 12
-	brlo	noNewHour
-
-	inc 	HOURS		; increment hour count
-	cpi	HOURS, 12
-	brlo 	noNewHour
-	ldi 	HOURS, 0
->>>>>>> Stashed changes
 	
 noNewHour:
 	;; Change time words if time changed
 	;; If we get here, minutes changed, but not hours
-	cpi 	MINUTES_PAST, 0
+	cpi r17, 0
 	brne	isItTenPast
 	;; 
 	;; call function to set all minute strings to intensity
@@ -207,7 +161,7 @@ isItTenPast:
 noNewTime:
 	/* Check buttons */
 	/* Check LDR, adjust PWM */
-	rjmp 	loop
+	rjmp loop
 
 
 timerInterrupt:
@@ -216,7 +170,7 @@ timerInterrupt:
 	push	r0
 
 	/* This will be called 62.5 times per second */
-	adiw 	r24, 1
+	adiw r24, 1
 	
 doneSetting2:
 	;;  restore status register
