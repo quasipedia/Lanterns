@@ -12,13 +12,13 @@
 ;; r6 = TLC SPI Byte type
 ;; r7 = scratch used in interrupt processing
 ;; r10 = channel # parameter to TLC_setChannelTargetIntensity
-;; r11: low byte of channel parameter
-;; r12: high byte of channel parameter
-;; r17 = minutes past hour
-;; r18 = hours (0-11)
-;; r19 = temp, can be overwritten by any function, but not overwritten
+;; N r11: low byte of channel parameter
+;; N r12: high byte of channel parameter
+;; I r17 = minutes past hour
+;; I r18 = hours (0-11)
+;; N r19 = temp, can be overwritten by any function, but not overwritten
 ;;       in interrupt handlers
-;; r20 = string nybble address for setting
+;; r20 = scratch for interrupt handling
 ;; r21 = scratch for interrupt handling
 ;; r24:r25 = timer counter
 ;; r26:r27 X, used in TLC_setChannelTargetIntensity.

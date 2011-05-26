@@ -86,6 +86,8 @@ TLC_init:
 	;; then just blanks
 	cbi	BLANK_PORT, BLANK_PIN
 
+	;; Must initialize current and target to 0 here, unless RAM is 0
+	;; by default
 	ret				; return from subrutine
 
 ;; Should send next byte if there is more data to be sent
@@ -216,33 +218,36 @@ TLC_spiTimerInterrupt:
 	;; save status byte
 	in	r0, 0x3f
 	push	r0
-
+	push	XL
+	push	XH
+	
 	;; Check if any diffs are not zero
 	;; X = r26:r27 current value
 	;; Y = r28:r29 target value
-	ldi	r26,	lo8( currentChannelValues )
-	ldi	r27,	hi8( currentChannelValues )
+	ldi	XL,	lo8( currentChannelValues )
+	ldi	XH,	hi8( currentChannelValues )
 
-	ldi	r28,	lo8( targetChannelValues )
-	ldi	r29,	hi8( targetChannelValues )
+	ldi	YL,	lo8( targetChannelValues )
+	ldi	YH,	hi8( targetChannelValues )
 
-	ldi	r19,	2 * 16 * NUMBER_TLC_CHIPS
+	ldi	REG_I_CHANNEL_INDEX,	2 * 16 * NUMBER_TLC_CHIPS
 
 	clr	r9		; R9 is change counter
 
 checkDiffsLoop:
-	ld	TICK_COUNTER,	Y+	; Target Low byte
-	ld	r0,	X+	; Current Low byte
-	sub	TICK_COUNTER,	r0	; TICK_COUNTER = TICK_COUNTER - r0
+	/* Calculate target - current */
+	ld	r0,	Y+	; r0=Target Low byte
+	ld	REG_I_LED_CURRENT_LOW,	X+	; r0=Current Low byte
+	sub	r0, REG_I_LED_CURRENT_LOW	; r0=lo8(target-current)
 
-	ld	r25,	Y+	; Target Low byte
-	ld	r0,	X+	; Current Low byte
-	sbc	r25,	r0	; r25 = r25 - r0. r7:r8=diff
+	ld	r0,	Y+	; Target Low byte
+	ld	REG_I_LED_CURRENT_HIGH,	X+	; Current High byte
+	sbc	r0, REG_I_LED_CURRENT_HIGH	; r25 = r25 - r0. r7:r8=diff
 
 	brne	modify
 
 doneModifying:
-	dec	r19
+	dec	REG_I_CHANNEL_INDEX
 	brne	checkDiffsLoop
 
 	rjmp	allUpdated
@@ -254,25 +259,26 @@ modify:
 	brmi	decrease
 
 	inc	r9
-	sbiw	r26,	2	; r26=X Move x ptr back to value we just compared
-	adiw	TICK_COUNTER,	1
-	st	X+,	TICK_COUNTER
-	st	X+,	r25
+	sbiw	XL,	2	; r26=X Move x ptr back to value we just compared
+	adiw	REG_I_LED_CURRENT_LOW,	1
+	st	X+,	REG_I_LED_CURRENT_LOW
+	st	X+,	REG_I_LED_CURRENT_HIGH
 
 	rjmp	doneModifying
 
 decrease:
 	inc	r9
-	sbiw	r26,	2	; Move x ptr back to value we just compared
-	sbiw	TICK_COUNTER,	1
-	st	X+,	TICK_COUNTER
-	st	X+,	r25
+	sbiw	XL,	2	; Move x ptr back to value we just compared
+	sbiw	REG_I_LED_CURRENT_LOW,	1
+	st	X+,	REG_I_LED_CURRENT_LOW
+	st	X+,	REG_I_LED_CURRENT_HIGH
 
 	rjmp	doneModifying
 
 allUpdated:
 	tst	r9
 	breq	allDiffsZero
+
 	rjmp	startSending
 
 allDiffsZero:
@@ -287,19 +293,21 @@ allDiffsZero:
 startSending:
 	dec	r3		; decrement counter of times to write
 
-	ldi	r30,	lo8(currentChannelValues)
-	ldi	r31,	hi8(currentChannelValues)
+	ldi	ZL,	lo8(currentChannelValues)
+	ldi	ZH,	hi8(currentChannelValues)
 
-	ldi	r19,	16 * NUMBER_TLC_CHIPS
-	mov	SPI_CHINDEX,	r19
+	ldi	REG_I_CHANNEL_INDEX,	16 * NUMBER_TLC_CHIPS
+	mov	SPI_CHINDEX,	REG_I_CHANNEL_INDEX
 
-	ldi	r19,	1	; Byte Type
-	mov	r4,	r19
+	ldi	REG_I_CHANNEL_INDEX,	1	; Byte Type
+	mov	r4,	REG_I_CHANNEL_INDEX
 
 	lpm	r0,	Z
 	out	SPDR,	r0	; Initiates transmission
 
 returnFromInterrupt:
+	pop	XH
+	pop	XL
 	;;  restore status register
 	pop	r0
 	out	0x3f, r0
