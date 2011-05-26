@@ -17,14 +17,8 @@
 
 ;; INCLUDES
 .include "m168.h"
+.include "reg_mnemonics.h"
 .include "config.h"
-
-
-;; REGISTER ALIASES
-;; for this to work, the file must be passed through the C preprocessor,
-;; which happens automatically if the file extension is ".S" instead of ".s"
-#define SPI_CHINDEX	r2
-#define SPI_BYTE_TYPE	r6
 
 
 ;; GLOBAL SYMBOLS for linking with other code
@@ -34,85 +28,93 @@
 
 
 ;; TLC5940 PIN DEFINITIONS
-.equ	SCLK_PORT,	PORTB
+.equ	SCLK_PORT,	PORTB	; Serial data shift clock.
 .equ	SCLK_PIN,	5
-.equ	XLAT_PORT,	PORTB
+.equ	GSCLK_PORT,	PORTB	; PWM reference clock
+.equ	GSCLK_PIN,	0
+.equ	XLAT_PORT,	PORTB	; Latch: HIGH sends data to DC og GS registers.
 .equ	XLAT_PIN,	1
-.equ	BLANK_PORT,	PORTB
+.equ	BLANK_PORT,	PORTB	; Blank all outputs. LOW = PWM active.
 .equ	BLANK_PIN,	2
-.equ	DCPRG_PORT,	PORTD
+.equ	DCPRG_PORT,	PORTD	; When DCPRG = H, DC changes DC register.
 .equ	DCPRG_PIN,	4
-.equ	VPRG_PORT,	PORTD
+.equ	VPRG_PORT,	PORTD	; When VPRG = GND, the device is in GS mode.
 .equ	VPRG_PIN,	7
 
 
 .text
 
 TLC_init:
-	;; Init TLC5940 control pin values
-	cbi	DCPRG_PORT, DCPRG_PIN
-	cbi	VPRG_PORT, VPRG_PIN
-	cbi	XLAT_PORT, XLAT_PIN
+	;; Init TLC5940 control pin values (cbi = clear bit)
+	cbi	DCPRG_PORT,	DCPRG_PIN
+	cbi	VPRG_PORT,	VPRG_PIN
+	cbi	XLAT_PORT,	XLAT_PIN
 
-	;; Start display blanked until time has been set
-	sbi	BLANK_PORT, BLANK_PIN
+	;; Start display blanked until time has been set (sbi = set bit)
+	sbi	BLANK_PORT,	BLANK_PIN
 
 	;; PB4 = MISO is input, others output
-	ldi	r16, 0xef
-	out	DDRB, r16	; Set port B to all outputs, except MISO
-	ser	r16		; Sets r16 to 0xff
-	out	DDRD, r16	; Set port D to all outputs
+	ldi	r16,	0b11101111	; ldi = load immediate
+	out	DDRB,	r16		; Set port B to all outputs, except MISO
+	ser	r16			; Sets r16 to 0xff (ser = set to 0xFF)
+	out	DDRD,	r16		; Set port D to all outputs
 
 	;; Enable SPI, set clock rate fck/2, idle low, data on rise
-	ldi	r16, 0b11010000
-	out	SPCR, r16
-	out	SPSR, 1
+	;; The setting of the clock is bits 0,1 of SPCR and bit 0 of SPSR
+	ldi	r16,	0b11010000
+	out	SPCR,	r16		; SPCR = SPI control register
+	out	SPSR,	0b00000001	; SPSR = SPI status register
 
-	;; Setup timer 2 for SPI
-	ldi	r16, 0b11000010	; Set OC2A on match, No OC2, CTC Mode
-	sts	TCCR2A, r16
+	;; Setup timer A for SPI
+	ldi	r16, 	0b11000010	; Set OC2A on match, No OC2, CTC Mode
+	sts	TCCR2A, r16		; TCCR = Timer/counter control register
+	ldi	r16, 	3		; Set comparison value for timer A
+	sts	OCR2A, r16		; OCR = Output compare register
 
-	ldi	r16, 0b00000111
-	sts	TCCR2B, r16	; Select prescaler 1024, turn on
+	;; Setup timer B
+	ldi	r16, 	0b00000111
+	sts	TCCR2B, r16		; Select prescaler 1024, turn on
 
-	ldi	r16, 3		; Conter top
-	sts	OCR2A, r16
-
+	;; Enable interrupt on compare A (OCIE2A bit)
 	ldi	r16,	0b00000010
-	sts	TIMSK2, r16     ; Enable interrupt on compare A (OCIE2A bit)
+	sts	TIMSK2, r16
 
-	ldi	r16,	2
-	mov	r3,	r16	; say that we want two updates of gs data,
+	;; Reset the GS data - ??? what's special with r3 ???
+	ldi	r16,		2
+	mov	HAVE_NEW_DATA,	r16	; we want two updates of gs data
+
 	;; then just blanks
-
 	cbi	BLANK_PORT, BLANK_PIN
 
-	ret
+	ret				; return from subrutine
 
 ;; Should send next byte if there is more data to be sent
 TLC_spiInterrupt:
-	in	r0, 0x3f
-	push	r0
-	push	r26		; push X register
-	push	r27
+	in	r0,	SREG		; bit 2 set means that brne will branch
+	push	r0			; push status register
+	push	r26			; push X register hi byte
+	push	r27			; push X register lo byte
 
+	;; Move on to the next TLC channel
 	dec	SPI_CHINDEX
-	brne	spiSendNext	; done!
+	brne	spiSendNext		; done!
 
-	clr	r0		; r0 is saved blank bit
-	;; Save blank bit.
-	sbic	BLANK_PORT, BLANK_PIN ; skip next instruction if bit clear
-	inc	r0		      ; ldi is invalid for register 0
+	;; ??? Not clear the purpose of this block ???
+	clr	r0			; erase status register
+	sbic	BLANK_PORT, BLANK_PIN	; skip next instruction if PWM active
+	inc	r0			; set carry flag ??? why ???
 
 	;; Sent last byte. Now make blank high to stop PWM, pulse XLAT,
 	;; make blank low
 	sbi	BLANK_PORT, BLANK_PIN
+
 	;; XLAT pulse minimum duration is 20 ns. One clock @ 16 MHz is 62 ns.
 	;; No problem.
 	sbi	XLAT_PORT, XLAT_PIN
 	cbi	XLAT_PORT, XLAT_PIN
+
 	;; if blank was 0, then clear it
-	sbrs	r0, 1		; Skip next instruction if bit in register set
+	sbrs	r0,	1		; Skip next if bit in register set
 	cbi	BLANK_PORT, BLANK_PIN
 
 	rjmp	spiReturn
@@ -138,8 +140,8 @@ spiSendNext:
 	cp	SPI_BYTE_TYPE,	0
 	brne	nextByteTypeNot0
 
-	lpm	r22,	Z+
-	lsl	r22
+	lpm	r22,	Z+		; lpm = Load program memory
+	lsl	r22			; lsl = logical shift left
 	lsl	r22
 	lsl	r22
 	lsl	r22
@@ -173,7 +175,7 @@ nextByteTypeNot0:
 	or	r22,	r7
 	dec	SPI_BYTE_TYPE
 
-	rjmp	sendByte
+	rjmp	sendByte	; one way of saying "goto" (uncondit. branch)
 
 nextByteTypeIs2:
 	lpm	r22,	Z+
@@ -195,16 +197,16 @@ nextByteTypeIs2:
 	dec	SPI_BYTE_TYPE
 
 sendByte:
-	out	SPDR,	r22	; Initiates transmission
+	out	SPDR,	r22		; SPDR = SPI data register
 
 spiReturn:
 	;;  restore status register
 	pop	r27
 	pop	r26
 	pop	r0
-	out	0x3f, r0
+	out	SREG, 	r0		; reset status register
 
-	reti
+	reti				; return from interrupt
 
 ;;;
 ;;; If new data, initiate SPI transfer
@@ -229,9 +231,9 @@ TLC_spiTimerInterrupt:
 	clr	r9		; R9 is change counter
 
 checkDiffsLoop:
-	ld	r24,	Y+	; Target Low byte
+	ld	TICK_COUNTER,	Y+	; Target Low byte
 	ld	r0,	X+	; Current Low byte
-	sub	r24,	r0	; r24 = r24 - r0
+	sub	TICK_COUNTER,	r0	; TICK_COUNTER = TICK_COUNTER - r0
 
 	ld	r25,	Y+	; Target Low byte
 	ld	r0,	X+	; Current Low byte
@@ -253,8 +255,8 @@ modify:
 
 	inc	r9
 	sbiw	r26,	2	; r26=X Move x ptr back to value we just compared
-	adiw	r24,	1
-	st	X+,	r24
+	adiw	TICK_COUNTER,	1
+	st	X+,	TICK_COUNTER
 	st	X+,	r25
 
 	rjmp	doneModifying
@@ -262,8 +264,8 @@ modify:
 decrease:
 	inc	r9
 	sbiw	r26,	2	; Move x ptr back to value we just compared
-	sbiw	r24,	1
-	st	X+,	r24
+	sbiw	TICK_COUNTER,	1
+	st	X+,	TICK_COUNTER
 	st	X+,	r25
 
 	rjmp	doneModifying

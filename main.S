@@ -46,15 +46,8 @@
 
 ;; INCLUDES
 .include "m168.h"
+.include "reg_mnemonics.h"
 .include "config.h"
-
-
-;; REGISTER ALIASES
-;; for this to work, the file must be passed through the C preprocessor,
-;; which happens automatically if the file extension is ".S" instead of ".s"
-#define MINS_PAST	r17
-#define HOURS		r18
-
 
 ;; CONSTANTS
 ;; TICKS_PER_STEP is the number of timer0 ticks per clock step.
@@ -91,8 +84,8 @@ init:
 	call	TLC_init
 
 	;; Initialize the time to midnight
-	ldi 	MINS_PAST, 	0		; 5 minutes past hour
-	ldi 	HOURS,		0			; hour
+	ldi 	MINS_PAST, 	0	; 5 minutes past hour
+	ldi 	HOURS,		0	; hour
 
 	;; Initialize timer tick counter
 	ldi	r24, 	0
@@ -114,9 +107,9 @@ init:
 	/* out PORTD, r16	*/ /* Sets portD outputs to 0? */
 
 loop:
-	; Idle Sleep
-	ldi 	r16,	1
-	out	SMCR,	r16		; sleep register
+	; Idle Sleep ??? isn't it ADC noise reduction ???
+	ldi 	r16,	1		; ??? ADC noise reduction mode ???
+	out	SMCR,	r16		; SMCR = Sleep mode control register
 	sleep
 
 doneSetting:
@@ -125,20 +118,20 @@ doneSetting:
 	;; 18750 == 0x493e times per 5 minutes
 	ldi	r16,	hi8( TICKS_PER_STEP )
 	cli			; make sure r24 doesn't change while comparing
-	cpi	r24,	lo8( TICKS_PER_STEP )
-	cpc	r25,	r16
+	cpi	r24,	lo8( TICKS_PER_STEP )	; compare with immediate
+	cpc	r25,	r16			; compare with carry
 	sei
-	brmi	noNewTime
+	brmi	noNewTime		; branch if minus
 
 	inc	MINS_PAST		; 5 minutes past the hour
 	cli
-	subi	r24, lo8( TICKS_PER_STEP )
-	sbci	r25, hi8( TICKS_PER_STEP )
+	subi	r24, lo8( TICKS_PER_STEP )	; subtract immediate
+	sbci	r25, hi8( TICKS_PER_STEP )	; subtract immediate with carry
 	sei
 	cpi	MINS_PAST, STEPS_PER_HOUR
-	brlo	noNewHour
+	brlo	noNewHour		; branch if lower
 
-	inc 	HOURS		; increment hour count
+	inc 	HOURS			; increment hour count
 	cpi	HOURS, HOURS_PER_DAY
 	brlo	noNewHour
 	ldi 	HOURS, 0
@@ -165,8 +158,8 @@ timerInterrupt:
 	in	r0, 0x3f
 	push	r0
 
-	/* This will be called 62.5 times per second */
-	adiw r24, 1
+	;; Incremement time counter (actual freq = 62.5Hz
+	adiw 	r24, 1
 
 doneSetting2:
 	;;  restore status register

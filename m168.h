@@ -44,7 +44,7 @@
 #pragma partinc 0
 
 ; ***** SPECIFY DEVICE ***************************************************
-.arch ATmega168
+.arch 	ATmega168
 #pragma AVRPART ADMIN PART_NAME ATmega168
 .equ	SIGNATURE_000	, 0x1e
 .equ	SIGNATURE_001	, 0x94
