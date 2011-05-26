@@ -2,7 +2,7 @@
 ;***** Created: 2010-02-25 11:46 ******* Source: ATmega168.xml ***********
 ;*************************************************************************
 ;* A P P L I C A T I O N   N O T E   F O R   T H E   A V R   F A M I L Y
-;* 
+;*
 ;* Number            : AVR000
 ;* File Name         : "m168def.inc"
 ;* Title             : Register/Bit Definitions for the ATmega168
@@ -10,27 +10,27 @@
 ;* Version           : 2.35
 ;* Support E-mail    : avr@atmel.com
 ;* Target MCU        : ATmega168
-;* 
+;*
 ;* DESCRIPTION
-;* When including this file in the assembly program file, all I/O register 
+;* When including this file in the assembly program file, all I/O register
 ;* names and I/O register bit names appearing in the data book can be used.
-;* In addition, the six registers forming the three data pointers X, Y and 
-;* Z have been assigned names XL - ZH. Highest RAM address for Internal 
-;* SRAM is also defined 
-;* 
+;* In addition, the six registers forming the three data pointers X, Y and
+;* Z have been assigned names XL - ZH. Highest RAM address for Internal
+;* SRAM is also defined
+;*
 ;* The Register names are represented by their hexadecimal address.
-;* 
+;*
 ;* The Register Bit names are represented by their bit number (0-7).
-;* 
+;*
 ;* Please observe the difference in using the bit names with instructions
 ;* such as "sbr"/"cbr" (set/clear bit in register) and "sbrs"/"sbrc"
 ;* (skip if bit in register set/cleared). The following example illustrates
 ;* this:
-;* 
+;*
 ;* in    r16,PORTB             ;read PORTB latch
 ;* sbr   r16,(1<<PB6)+(1<<PB5) ;set PB6 and PB5 (use masks, not bit#)
 ;* out   PORTB,r16             ;output to PORTB
-;* 
+;*
 ;* in    r16,TIFR              ;read the Timer Interrupt Flag Register
 ;* sbrc  r16,TOV0              ;test the overflow flag (use bit#)
 ;* rjmp  TOV0_is_set           ;jump if set
@@ -44,7 +44,7 @@
 #pragma partinc 0
 
 ; ***** SPECIFY DEVICE ***************************************************
-.arch ATmega168
+.arch 	ATmega168
 #pragma AVRPART ADMIN PART_NAME ATmega168
 .equ	SIGNATURE_000	, 0x1e
 .equ	SIGNATURE_001	, 0x94
@@ -212,30 +212,30 @@
 
 ; ***** TWI **************************
 ; TWAMR - TWI (Slave) Address Mask Register
-.equ	TWAM0	, 1	; 
+.equ	TWAM0	, 1	;
 .equ	TWAMR0	, TWAM0	; For compatibility
-.equ	TWAM1	, 2	; 
+.equ	TWAM1	, 2	;
 .equ	TWAMR1	, TWAM1	; For compatibility
-.equ	TWAM2	, 3	; 
+.equ	TWAM2	, 3	;
 .equ	TWAMR2	, TWAM2	; For compatibility
-.equ	TWAM3	, 4	; 
+.equ	TWAM3	, 4	;
 .equ	TWAMR3	, TWAM3	; For compatibility
-.equ	TWAM4	, 5	; 
+.equ	TWAM4	, 5	;
 .equ	TWAMR4	, TWAM4	; For compatibility
-.equ	TWAM5	, 6	; 
+.equ	TWAM5	, 6	;
 .equ	TWAMR5	, TWAM5	; For compatibility
-.equ	TWAM6	, 7	; 
+.equ	TWAM6	, 7	;
 .equ	TWAMR6	, TWAM6	; For compatibility
 
 ; TWBR - TWI Bit Rate register
-.equ	TWBR0	, 0	; 
-.equ	TWBR1	, 1	; 
-.equ	TWBR2	, 2	; 
-.equ	TWBR3	, 3	; 
-.equ	TWBR4	, 4	; 
-.equ	TWBR5	, 5	; 
-.equ	TWBR6	, 6	; 
-.equ	TWBR7	, 7	; 
+.equ	TWBR0	, 0	;
+.equ	TWBR1	, 1	;
+.equ	TWBR2	, 2	;
+.equ	TWBR3	, 3	;
+.equ	TWBR4	, 4	;
+.equ	TWBR5	, 5	;
+.equ	TWBR6	, 6	;
+.equ	TWBR7	, 7	;
 
 ; TWCR - TWI Control Register
 .equ	TWIE	, 0	; TWI Interrupt Enable
@@ -307,8 +307,8 @@
 .equ	ICNC1	, 7	; Input Capture 1 Noise Canceler
 
 ; TCCR1C - Timer/Counter1 Control Register C
-.equ	FOC1B	, 6	; 
-.equ	FOC1A	, 7	; 
+.equ	FOC1B	, 6	;
+.equ	FOC1A	, 7	;
 
 ; GTCCR - General Timer/Counter Control Register
 .equ	PSRSYNC	, 0	; Prescaler Reset Timer/Counter1 and Timer/Counter0
@@ -412,7 +412,7 @@
 .equ	ADTS0	, 0	; ADC Auto Trigger Source bit 0
 .equ	ADTS1	, 1	; ADC Auto Trigger Source bit 1
 .equ	ADTS2	, 2	; ADC Auto Trigger Source bit 2
-.equ	ACME	, 6	; 
+.equ	ACME	, 6	;
 
 ; ADCH - ADC Data Register High Byte
 .equ	ADCH0	, 0	; ADC Data Register High Byte Bit 0
@@ -435,12 +435,12 @@
 .equ	ADCL7	, 7	; ADC Data Register Low Byte Bit 7
 
 ; DIDR0 - Digital Input Disable Register
-.equ	ADC0D	, 0	; 
-.equ	ADC1D	, 1	; 
-.equ	ADC2D	, 2	; 
-.equ	ADC3D	, 3	; 
-.equ	ADC4D	, 4	; 
-.equ	ADC5D	, 5	; 
+.equ	ADC0D	, 0	;
+.equ	ADC1D	, 1	;
+.equ	ADC2D	, 2	;
+.equ	ADC3D	, 3	;
+.equ	ADC4D	, 4	;
+.equ	ADC5D	, 5	;
 
 
 ; ***** ANALOG_COMPARATOR ************
@@ -598,39 +598,39 @@
 .equ	CS00	, 0	; Clock Select
 .equ	CS01	, 1	; Clock Select
 .equ	CS02	, 2	; Clock Select
-.equ	WGM02	, 3	; 
+.equ	WGM02	, 3	;
 .equ	FOC0B	, 6	; Force Output Compare B
 .equ	FOC0A	, 7	; Force Output Compare A
 
 ; TCNT0 - Timer/Counter0
-.equ	TCNT0_0	, 0	; 
-.equ	TCNT0_1	, 1	; 
-.equ	TCNT0_2	, 2	; 
-.equ	TCNT0_3	, 3	; 
-.equ	TCNT0_4	, 4	; 
-.equ	TCNT0_5	, 5	; 
-.equ	TCNT0_6	, 6	; 
-.equ	TCNT0_7	, 7	; 
+.equ	TCNT0_0	, 0	;
+.equ	TCNT0_1	, 1	;
+.equ	TCNT0_2	, 2	;
+.equ	TCNT0_3	, 3	;
+.equ	TCNT0_4	, 4	;
+.equ	TCNT0_5	, 5	;
+.equ	TCNT0_6	, 6	;
+.equ	TCNT0_7	, 7	;
 
 ; OCR0A - Timer/Counter0 Output Compare Register
-.equ	OCR0A_0	, 0	; 
-.equ	OCR0A_1	, 1	; 
-.equ	OCR0A_2	, 2	; 
-.equ	OCR0A_3	, 3	; 
-.equ	OCR0A_4	, 4	; 
-.equ	OCR0A_5	, 5	; 
-.equ	OCR0A_6	, 6	; 
-.equ	OCR0A_7	, 7	; 
+.equ	OCR0A_0	, 0	;
+.equ	OCR0A_1	, 1	;
+.equ	OCR0A_2	, 2	;
+.equ	OCR0A_3	, 3	;
+.equ	OCR0A_4	, 4	;
+.equ	OCR0A_5	, 5	;
+.equ	OCR0A_6	, 6	;
+.equ	OCR0A_7	, 7	;
 
 ; OCR0B - Timer/Counter0 Output Compare Register
-.equ	OCR0B_0	, 0	; 
-.equ	OCR0B_1	, 1	; 
-.equ	OCR0B_2	, 2	; 
-.equ	OCR0B_3	, 3	; 
-.equ	OCR0B_4	, 4	; 
-.equ	OCR0B_5	, 5	; 
-.equ	OCR0B_6	, 6	; 
-.equ	OCR0B_7	, 7	; 
+.equ	OCR0B_0	, 0	;
+.equ	OCR0B_1	, 1	;
+.equ	OCR0B_2	, 2	;
+.equ	OCR0B_3	, 3	;
+.equ	OCR0B_4	, 4	;
+.equ	OCR0B_5	, 5	;
+.equ	OCR0B_6	, 6	;
+.equ	OCR0B_7	, 7	;
 
 ; GTCCR - General Timer/Counter Control Register
 ;.equ	PSRSYNC	, 0	; Prescaler Reset Timer/Counter1 and Timer/Counter0
@@ -758,9 +758,9 @@
 .equ	SPMIE	, 7	; SPM Interrupt Enable
 
 ; MCUCR - MCU Control Register
-.equ	IVCE	, 0	; 
-.equ	IVSEL	, 1	; 
-.equ	PUD	, 4	; 
+.equ	IVCE	, 0	;
+.equ	IVSEL	, 1	;
+.equ	PUD	, 4	;
 
 ; MCUSR - MCU Status Register
 .equ	PORF	, 0	; Power-on reset flag
@@ -769,50 +769,50 @@
 .equ	BORF	, 2	; Brown-out Reset Flag
 .equ	WDRF	, 3	; Watchdog Reset Flag
 
-; SMCR - 
-.equ	SE	, 0	; 
-.equ	SM0	, 1	; 
-.equ	SM1	, 2	; 
-.equ	SM2	, 3	; 
+; SMCR -
+.equ	SE	, 0	;
+.equ	SM0	, 1	;
+.equ	SM1	, 2	;
+.equ	SM2	, 3	;
 
 ; GPIOR2 - General Purpose I/O Register 2
-.equ	GPIOR20	, 0	; 
-.equ	GPIOR21	, 1	; 
-.equ	GPIOR22	, 2	; 
-.equ	GPIOR23	, 3	; 
-.equ	GPIOR24	, 4	; 
-.equ	GPIOR25	, 5	; 
-.equ	GPIOR26	, 6	; 
-.equ	GPIOR27	, 7	; 
+.equ	GPIOR20	, 0	;
+.equ	GPIOR21	, 1	;
+.equ	GPIOR22	, 2	;
+.equ	GPIOR23	, 3	;
+.equ	GPIOR24	, 4	;
+.equ	GPIOR25	, 5	;
+.equ	GPIOR26	, 6	;
+.equ	GPIOR27	, 7	;
 
 ; GPIOR1 - General Purpose I/O Register 1
-.equ	GPIOR10	, 0	; 
-.equ	GPIOR11	, 1	; 
-.equ	GPIOR12	, 2	; 
-.equ	GPIOR13	, 3	; 
-.equ	GPIOR14	, 4	; 
-.equ	GPIOR15	, 5	; 
-.equ	GPIOR16	, 6	; 
-.equ	GPIOR17	, 7	; 
+.equ	GPIOR10	, 0	;
+.equ	GPIOR11	, 1	;
+.equ	GPIOR12	, 2	;
+.equ	GPIOR13	, 3	;
+.equ	GPIOR14	, 4	;
+.equ	GPIOR15	, 5	;
+.equ	GPIOR16	, 6	;
+.equ	GPIOR17	, 7	;
 
 ; GPIOR0 - General Purpose I/O Register 0
-.equ	GPIOR00	, 0	; 
-.equ	GPIOR01	, 1	; 
-.equ	GPIOR02	, 2	; 
-.equ	GPIOR03	, 3	; 
-.equ	GPIOR04	, 4	; 
-.equ	GPIOR05	, 5	; 
-.equ	GPIOR06	, 6	; 
-.equ	GPIOR07	, 7	; 
+.equ	GPIOR00	, 0	;
+.equ	GPIOR01	, 1	;
+.equ	GPIOR02	, 2	;
+.equ	GPIOR03	, 3	;
+.equ	GPIOR04	, 4	;
+.equ	GPIOR05	, 5	;
+.equ	GPIOR06	, 6	;
+.equ	GPIOR07	, 7	;
 
 ; PRR - Power Reduction Register
-.equ	PRADC	, 0	; Power Reduction ADC
+.equ	PRADC		, 0	; Power Reduction ADC
 .equ	PRUSART0	, 1	; Power Reduction USART
-.equ	PRSPI	, 2	; Power Reduction Serial Peripheral Interface
-.equ	PRTIM1	, 3	; Power Reduction Timer/Counter1
-.equ	PRTIM0	, 5	; Power Reduction Timer/Counter0
-.equ	PRTIM2	, 6	; Power Reduction Timer/Counter2
-.equ	PRTWI	, 7	; Power Reduction TWI
+.equ	PRSPI		, 2	; Power Reduction Serial Peripheral Interface
+.equ	PRTIM1		, 3	; Power Reduction Timer/Counter1
+.equ	PRTIM0		, 5	; Power Reduction Timer/Counter0
+.equ	PRTIM2		, 6	; Power Reduction Timer/Counter2
+.equ	PRTWI		, 7	; Power Reduction TWI
 
 
 ; ***** WATCHDOG *********************
@@ -885,10 +885,10 @@
 .equ	BODLEVEL0	, 0	; Brown-out Detector trigger level
 .equ	BODLEVEL1	, 1	; Brown-out Detector trigger level
 .equ	BODLEVEL2	, 2	; Brown-out Detector trigger level
-.equ	EESAVE	, 3	; EEPROM memory is preserved through chip erase
-.equ	WDTON	, 4	; Watchdog Timer Always On
-.equ	SPIEN	, 5	; Enable Serial programming and Data Downloading
-.equ	DWEN	, 6	; debugWIRE Enable
+.equ	EESAVE		, 3	; EEPROM memory is preserved through chip erase
+.equ	WDTON		, 4	; Watchdog Timer Always On
+.equ	SPIEN		, 5	; Enable Serial programming and Data Downloading
+.equ	DWEN		, 6	; debugWIRE Enable
 .equ	RSTDISBL	, 7	; External reset disable
 
 ; EXTENDED fuse bits
@@ -910,18 +910,19 @@
 
 ; ***** DATA MEMORY DECLARATIONS *****************************************
 .equ	FLASHEND	, 0x1fff	; Note: Word address
-.equ	IOEND	, 0x00ff
+.equ	IOEND		, 0x00ff
 .equ	SRAM_START	, 0x0100
 .equ	SRAM_SIZE	, 1024
-.equ	RAMEND	, 0x04ff
-.equ	XRAMEND	, 0x0000
-.equ	E2END	, 0x01ff
+.equ	RAMEND		, 0x04ff
+.equ	XRAMEND		, 0x0000
+.equ	E2END		, 0x01ff
 .equ	EEPROMEND	, 0x01ff
 .equ	EEADRBITS	, 9
 #pragma AVRPART MEMORY PROG_FLASH 16384
 #pragma AVRPART MEMORY EEPROM 512
 #pragma AVRPART MEMORY INT_SRAM SIZE 1024
 #pragma AVRPART MEMORY INT_SRAM START_ADDR 0x100
+
 
 
 
@@ -946,7 +947,7 @@
 .equ	PCI0addr	, 0x0006	; Pin Change Interrupt Request 0
 .equ	PCI1addr	, 0x0008	; Pin Change Interrupt Request 0
 .equ	PCI2addr	, 0x000a	; Pin Change Interrupt Request 1
-.equ	WDTaddr	, 0x000c	; Watchdog Time-out Interrupt
+.equ	WDTaddr		, 0x000c	; Watchdog Time-out Interrupt
 .equ	OC2Aaddr	, 0x000e	; Timer/Counter2 Compare Match A
 .equ	OC2Baddr	, 0x0010	; Timer/Counter2 Compare Match A
 .equ	OVF2addr	, 0x0012	; Timer/Counter2 Overflow
@@ -957,14 +958,14 @@
 .equ	OC0Aaddr	, 0x001c	; TimerCounter0 Compare Match A
 .equ	OC0Baddr	, 0x001e	; TimerCounter0 Compare Match B
 .equ	OVF0addr	, 0x0020	; Timer/Couner0 Overflow
-.equ	SPIaddr	, 0x0022	; SPI Serial Transfer Complete
+.equ	SPIaddr		, 0x0022	; SPI Serial Transfer Complete
 .equ	URXCaddr	, 0x0024	; USART Rx Complete
 .equ	UDREaddr	, 0x0026	; USART, Data Register Empty
 .equ	UTXCaddr	, 0x0028	; USART Tx Complete
 .equ	ADCCaddr	, 0x002a	; ADC Conversion Complete
 .equ	ERDYaddr	, 0x002c	; EEPROM Ready
-.equ	ACIaddr	, 0x002e	; Analog Comparator
-.equ	TWIaddr	, 0x0030	; Two-wire Serial Interface
+.equ	ACIaddr		, 0x002e	; Analog Comparator
+.equ	TWIaddr		, 0x0030	; Two-wire Serial Interface
 .equ	SPMRaddr	, 0x0032	; Store Program Memory Read
 
 .equ	INT_VECTORS_SIZE	, 52	; size in words

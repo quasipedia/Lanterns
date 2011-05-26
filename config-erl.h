@@ -2,13 +2,13 @@
 	;; Matrix:
 	;; K L O C K A N X Ä R
 	;; 0 0 0 1 1 1 2   2 2
-	;; 
+	;;
 	;; X T J U G O F E M X
 	;;   3 3 3 4 4 5 5 5
-	;; 
+	;;
 	;; T I O K V A R T X I
 	;; 6 6 6 7 7 7 8 8   9
-	;; 
+	;;
 	;; X Ö V E R X H A L V
 	;;   a a a b   c c c d
 	;;
@@ -23,7 +23,7 @@
 	;;
 	;; S J U T O L V N I O
 	;;1a1a1a1b1b1b1c1d1d1d
-	;; 
+	;;
 	;; Want structure to map minutes past the hour to strings to light
 	;; 0 -> <none>
 	;; 1 -> 5, a, b
@@ -37,7 +37,7 @@
 	;; 9 -> 7, 8, 9
 	;; 10-> 6, 9
 	;; 11-> 5, 9
-	
+
 .equ	NUMBER_TLC_CHIPS,	2
 .global NUMBER_TLC_CHIPS
 
