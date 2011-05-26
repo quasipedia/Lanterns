@@ -46,7 +46,7 @@
 
 ;; INCLUDES
 .include "m168.h"
-.include "reg_mnemonics.h"
+#include "reg_mnemonics.h"
 .include "config.h"
 
 ;; CONSTANTS
