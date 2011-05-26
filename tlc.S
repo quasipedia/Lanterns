@@ -81,7 +81,7 @@ TLC_init:
 
 	;; Reset the GS data - ??? what's special with r3 ???
 	ldi	r16,		2
-	mov	HAVE_NEW_DATA,	r16	; we want two updates of gs data
+	mov	r3,	r16	; we want two updates of gs data
 
 	;; then just blanks
 	cbi	BLANK_PORT, BLANK_PIN
@@ -96,7 +96,7 @@ TLC_spiInterrupt:
 	push	r27			; push X register lo byte
 
 	;; Move on to the next TLC channel
-	dec	SPI_CHINDEX
+	dec	r2
 	brne	spiSendNext		; done!
 
 	;; ??? Not clear the purpose of this block ???
@@ -120,7 +120,7 @@ TLC_spiInterrupt:
 	rjmp	spiReturn
 
 spiSendNext:
-	;; SPI_CHINDEX contains index of byte to send.
+	;; r2 contains index of byte to send.
 	;;
 	;; Byte 0: high byte of channel 0 intensity
 	;; Byte 1: low nybble of channel 1 intensity, high nybble of channel 2
@@ -137,7 +137,7 @@ spiSendNext:
 	;; Track byte type in one register, channel index in another, drop
 	;; byte counter. Start with highest channel.
 
-	cp	SPI_BYTE_TYPE,	0
+	cp	r6,	0
 	brne	nextByteTypeNot0
 
 	lpm	r22,	Z+		; lpm = Load program memory
@@ -154,12 +154,12 @@ spiSendNext:
 
 	;; next byte type will be 2
 	ldi	r21,	2
-	mov	SPI_BYTE_TYPE,	r21
+	mov	r6,	r21
 
 	rjmp	sendByte
 
 nextByteTypeNot0:
-	cp	SPI_BYTE_TYPE,	1
+	cp	r6,	1
 	brne	nextByteTypeIs2
 	;; Byte type is 1, Z points to low byte
 	lpm	r22,	Z+
@@ -173,7 +173,7 @@ nextByteTypeNot0:
 	lsr	r7
 
 	or	r22,	r7
-	dec	SPI_BYTE_TYPE
+	dec	r6
 
 	rjmp	sendByte	; one way of saying "goto" (uncondit. branch)
 
@@ -194,7 +194,7 @@ nextByteTypeIs2:
 
 	or	r22, r7
 
-	dec	SPI_BYTE_TYPE
+	dec	r6
 
 sendByte:
 	out	SPDR,	r22		; SPDR = SPI data register
@@ -231,9 +231,9 @@ TLC_spiTimerInterrupt:
 	clr	r9		; R9 is change counter
 
 checkDiffsLoop:
-	ld	TICK_COUNTER,	Y+	; Target Low byte
+	ld	r24,	Y+	; Target Low byte
 	ld	r0,	X+	; Current Low byte
-	sub	TICK_COUNTER,	r0	; TICK_COUNTER = TICK_COUNTER - r0
+	sub	r24,	r0	; r24 = r24 - r0
 
 	ld	r25,	Y+	; Target Low byte
 	ld	r0,	X+	; Current Low byte
@@ -255,8 +255,8 @@ modify:
 
 	inc	r9
 	sbiw	r26,	2	; r26=X Move x ptr back to value we just compared
-	adiw	TICK_COUNTER,	1
-	st	X+,	TICK_COUNTER
+	adiw	r24,	1
+	st	X+,	r24
 	st	X+,	r25
 
 	rjmp	doneModifying
@@ -264,8 +264,8 @@ modify:
 decrease:
 	inc	r9
 	sbiw	r26,	2	; Move x ptr back to value we just compared
-	sbiw	TICK_COUNTER,	1
-	st	X+,	TICK_COUNTER
+	sbiw	r24,	1
+	st	X+,	r24
 	st	X+,	r25
 
 	rjmp	doneModifying
@@ -291,7 +291,7 @@ startSending:
 	ldi	r31,	hi8(currentChannelValues)
 
 	ldi	r19,	16 * NUMBER_TLC_CHIPS
-	mov	SPI_CHINDEX,	r19
+	mov	r2,	r19
 
 	ldi	r19,	1	; Byte Type
 	mov	r4,	r19
@@ -313,7 +313,7 @@ returnFromInterrupt:
 ;;; Uses r10
 ;;;
 TLC_setChannelTargetIntensity:
-	.global TLC_setChannelTargetIntensity
+.global TLC_setChannelTargetIntensity
 
 	ldi	r26,	lo8( targetChannelValues )
 	ldi	r27,	hi8( targetChannelValues )

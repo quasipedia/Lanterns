@@ -74,7 +74,7 @@
 .org OVF0addr * 2
 	rjmp	timerInterrupt	  	;; Timer 0 overflow
 .org SPIaddr * 2
-	rjmp TLC_spiInterrupt
+	rjmp	TLC_spiInterrupt
 .org INT_VECTORS_SIZE * 2
 
 init:
