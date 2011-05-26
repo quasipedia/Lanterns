@@ -107,8 +107,10 @@ init:
 	/* out PORTD, r16	*/ /* Sets portD outputs to 0? */
 
 loop:
-	; Idle Sleep ??? isn't it ADC noise reduction ???
-	ldi 	r16,	1		; ??? ADC noise reduction mode ???
+	; Mac: Idle Sleep ??? isn't it ADC noise reduction ???
+	; Erl: No. The lowest bit is SE (Sleep enable) the three bits above that
+	;      are 0, which is idle sleep mode
+	ldi 	r16,	1
 	out	SMCR,	r16		; SMCR = Sleep mode control register
 	sleep
 

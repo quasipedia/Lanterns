@@ -315,15 +315,15 @@ returnFromInterrupt:
 TLC_setChannelTargetIntensity:
 	.global TLC_setChannelTargetIntensity
 
-	ldi	r26,	lo8( targetChannelValues )
-	ldi	r27,	hi8( targetChannelValues )
+	ldi	XL,	lo8( targetChannelValues )
+	ldi	XH,	hi8( targetChannelValues )
 
-	lsl	r10
-	add	r26,	r10
-	adc	r26,	0
+	lsl	REG_TLC_CHANNEL_NUMBER
+	add	XL,	REG_TLC_CHANNEL_NUMBER
+	adc	XH,	0
 
-	st	X+,	r11
-	st	X+,	r12
+	st	X+,	REG_TLC_CHANNEL_INTENSITY_LOW
+	st	X+,	REG_TLC_CHANNEL_INTENSITY_HIGH
 
 	ret
 
