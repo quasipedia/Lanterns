@@ -12,13 +12,13 @@
 ;; r6 = TLC SPI Byte type
 ;; r7 = scratch used in interrupt processing
 ;; r10 = channel # parameter to TLC_setChannelTargetIntensity
-;; r11: low byte of channel parameter
-;; r12: high byte of channel parameter
-;; r17 = minutes past hour
-;; r18 = hours (0-11)
-;; r19 = temp, can be overwritten by any function, but not overwritten
+;; N r11: low byte of channel parameter
+;; N r12: high byte of channel parameter
+;; I r17 = minutes past hour
+;; I r18 = hours (0-11)
+;; N r19 = temp, can be overwritten by any function, but not overwritten
 ;;       in interrupt handlers
-;; r20 = string nybble address for setting
+;; r20 = scratch for interrupt handling
 ;; r21 = scratch for interrupt handling
 ;; r24:r25 = timer counter
 ;; r26:r27 X, used in TLC_setChannelTargetIntensity.
@@ -46,7 +46,7 @@
 
 ;; INCLUDES
 .include "m168.h"
-.include "reg_mnemonics.h"
+#include "reg_mnemonics.h"
 .include "config.h"
 
 ;; CONSTANTS
@@ -74,7 +74,7 @@
 .org OVF0addr * 2
 	rjmp	timerInterrupt	  	;; Timer 0 overflow
 .org SPIaddr * 2
-	rjmp	TLC_spiInterrupt
+	rjmp TLC_spiInterrupt
 .org INT_VECTORS_SIZE * 2
 
 init:
@@ -107,8 +107,10 @@ init:
 	/* out PORTD, r16	*/ /* Sets portD outputs to 0? */
 
 loop:
-	; Idle Sleep ??? isn't it ADC noise reduction ???
-	ldi 	r16,	1		; ??? ADC noise reduction mode ???
+	; Mac: Idle Sleep ??? isn't it ADC noise reduction ???
+	; Erl: No. The lowest bit is SE (Sleep enable) the three bits above that
+	;      are 0, which is idle sleep mode
+	ldi 	r16,	1
 	out	SMCR,	r16		; SMCR = Sleep mode control register
 	sleep
 
